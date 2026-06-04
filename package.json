@@ -1,0 +1,6 @@
+{"name": "top-app",
+  "version": "1.0.0",
+  "description": "My first Node.js app",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "dependencies": {"express": "^4.19.2"  }}
