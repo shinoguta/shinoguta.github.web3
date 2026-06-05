@@ -14,13 +14,8 @@ const server = http
     const now = new Date();
     console.info(`[${now}] Requested by ${req.socket.remoteAddress}`);
 
-    res.writeHead(200, {
-      'Content-Type': 'text/plain; charset=utf-8'
-    });
-
-if (req.method === 'POST') {
-      // Slackに「受け取ったよ！」と3秒以内に即レスする
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
+    if (req.method === 'POST') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('OK');
 
       let rawData = '';
@@ -35,8 +30,6 @@ if (req.method === 'POST') {
             const data = JSON.parse(rawData);
 
             if (data.type === 'url_verification') {
-              res.write(data.challenge);
-              res.end();
               return;
             }
 
@@ -66,15 +59,14 @@ if (req.method === 'POST') {
           }
         });
     } else {
-      res.write('OK');
-      res.end();
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('OK');
     }
   })
   .on('error', e => {
     console.error('Server Error', e);
   });
 
-// サーバーを起動するポートを設定
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.info(`Server is running on port ${port}`);
