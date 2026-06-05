@@ -5,7 +5,7 @@ const { WebClient } = require('@slack/web-api');
 const token = process.env.SLACK_BOT_TOKEN;
 const web = new WebClient(token);
 
-const GITHUB_USER = 'あなたのGitHubユーザー名';
+const GITHUB_USER = 'GitHubユーザー名';
 const REPO_NAME = 'リポジトリ名';
 const IMAGE_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/binturong.png`;
 
