@@ -5,6 +5,10 @@ const { WebClient } = require('@slack/web-api');
 const token = process.env.SLACK_BOT_TOKEN;
 const web = new WebClient(token);
 
+const GITHUB_USER = 'あなたのGitHubユーザー名';
+const REPO_NAME = 'リポジトリ名';
+const IMAGE_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/binturong.png`;
+
 const server = http
   .createServer((req, res) => {
     const now = new Date();
@@ -46,9 +50,11 @@ const server = http
                 replyText = 'ウゥー！';
               }
 
+              const finalMessage = `${replyText}\n${IMAGE_URL}`;
+
               await web.chat.postMessage({
                 channel: data.event.channel,
-                text: replyText
+                text: finalMessage
               });
             }
           } catch (e) {
@@ -61,14 +67,4 @@ const server = http
     res.end();
   })
   .on('error', e => {
-    console.error(`[${new Date()}] Server Error`, e);
-  })
-  .on('clientError', (e, socket) => {
-    console.error(`[${new Date()}] Client Error`, e);
-    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
-  });
-
-const port = 8000;
-server.listen(port, () => {
-  console.log(`Listening on ${port}`);
-});
+    console
