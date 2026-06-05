@@ -18,7 +18,11 @@ const server = http
       'Content-Type': 'text/plain; charset=utf-8'
     });
 
-    if (req.method === 'POST') {
+if (req.method === 'POST') {
+      // Slackに「受け取ったよ！」と3秒以内に即レスする
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('OK');
+
       let rawData = '';
       req
         .on('data', chunk => {
