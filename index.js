@@ -1,5 +1,9 @@
 'use strict';
 const http = require('node:http');
+const { WebClient } = require('@slack/web-api');
+
+const token = process.env.SLACK_BOT_TOKEN;
+const web = new WebClient(token);
 
 const server = http
   .createServer((req, res) => {
@@ -10,24 +14,50 @@ const server = http
       'Content-Type': 'text/plain; charset=utf-8'
     });
 
-    switch (req.method) {
-      case 'GET':
-        res.write(`GET ${req.url}\n`);
-        break;
-      case 'POST':
-        res.write(`POST ${req.url}\n`);
-        let rawData = '';
-        req
-          .on('data', chunk => {
-            rawData += chunk;
-          })
-          .on('end', () => {
-            console.info(`[${now}] Data posted: ${rawData}`);
-          });
-        break;
-      default:
-        break;
+    if (req.method === 'POST') {
+      let rawData = '';
+      req
+        .on('data', chunk => {
+          rawData += chunk;
+        })
+        .on('end', async () => {
+          console.info(`[${now}] Data posted: ${rawData}`);
+          
+          try {
+            const data = JSON.parse(rawData);
+
+            if (data.type === 'url_verification') {
+              res.write(data.challenge);
+              res.end();
+              return;
+            }
+
+            if (data.event && data.event.type === 'message' && !data.event.bot_id) {
+              const userText = data.event.text || '';
+              let replyText = '';
+
+              if (userText.includes('おはよう') || userText.includes('こんにちは') || userText.includes('こんばんは')) {
+                replyText = 'ニャー';
+              } else if (userText.includes('ご飯')) {
+                replyText = 'グルグル';
+              } else if (userText.includes('おやすみ')) {
+                replyText = 'シュー';
+              } else {
+                replyText = 'ウゥー！';
+              }
+
+              await web.chat.postMessage({
+                channel: data.event.channel,
+                text: replyText
+              });
+            }
+          } catch (e) {
+            console.error('JSON Parse Error', e);
+          }
+        });
     }
+
+    res.write('OK');
     res.end();
   })
   .on('error', e => {
