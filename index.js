@@ -5,10 +5,6 @@ const { WebClient } = require('@slack/web-api');
 const token = process.env.SLACK_BOT_TOKEN;
 const web = new WebClient(token);
 
-const GITHUB_USER = 'GitHubユーザー名';
-const REPO_NAME = 'リポジトリ名';
-const IMAGE_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/binturong.png`;
-
 const server = http
   .createServer((req, res) => {
     const now = new Date();
@@ -47,11 +43,9 @@ const server = http
                 replyText = 'ウゥー！';
               }
 
-              const finalMessage = `${replyText}\n${IMAGE_URL}`;
-
               await web.chat.postMessage({
                 channel: data.event.channel,
-                text: finalMessage
+                text: replyText
               });
             }
           } catch (e) {
