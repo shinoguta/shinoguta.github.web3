@@ -61,10 +61,17 @@ const server = http
             console.error('JSON Parse Error', e);
           }
         });
+    } else {
+      res.write('OK');
+      res.end();
     }
-
-    res.write('OK');
-    res.end();
   })
   .on('error', e => {
-    console
+    console.error('Server Error', e);
+  });
+
+// サーバーを起動するポートを設定
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.info(`Server is running on port ${port}`);
+});
